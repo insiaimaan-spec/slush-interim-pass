@@ -26,11 +26,7 @@
         <div class="absolute -bottom-10 -right-10 w-32 h-32 bg-blue-500/10 rounded-full blur-3xl"></div>
 
         <div class="flex justify-center mb-5 relative z-10">
-            <div class="h-16 w-16 rounded-2xl bg-gradient-to-br from-cyan-500/20 to-blue-600/20 border border-cyan-500/30 flex items-center justify-center shadow-lg shadow-cyan-500/10">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-9 h-9 text-cyan-400 drop-shadow-[0_0_8px_rgba(34,211,238,0.4)]">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v18M3 12h18M5.22 5.22l13.56 13.56M18.78 5.22L5.22 18.78M12 7l3 5-3 5-3-5z" />
-                </svg>
-            </div>
+            <img src="1000073832.png" onerror="this.src='https://cdn.prod.website-files.com/680905cfdc450738383648a6/6870e4e53832c8115a855885_slush_opengraph.jpg'" alt="SLUSH Logo" class="h-16 w-16 rounded-2xl object-cover border border-neutral-700 shadow-lg shadow-cyan-500/5">
         </div>
 
         <h1 class="text-3xl font-extrabold tracking-tight bg-gradient-to-r from-cyan-400 via-sky-400 to-blue-500 bg-clip-text text-transparent mb-1">
@@ -42,7 +38,7 @@
         </div>
 
         <div class="mb-6 rounded-2xl overflow-hidden bg-neutral-950 aspect-square flex items-center justify-center border border-neutral-800 shadow-inner group relative z-10">
-            <img id="nftImage" src="https://cdn.prod.website-files.com/680905cfdc450738383648a6/6870e4e53832c8115a855885_slush_opengraph.jpg" alt="Slush Interim Pass" class="object-cover h-full w-full transition duration-700 group-hover:scale-105 filter brightness-90 group-hover:brightness-100">
+            <img id="nftImage" src="1000073832.png" onerror="this.src='https://cdn.prod.website-files.com/680905cfdc450738383648a6/6870e4e53832c8115a855885_slush_opengraph.jpg'" alt="Slush Interim Pass" class="object-cover h-full w-full transition duration-700 group-hover:scale-105 filter brightness-90 group-hover:brightness-100">
             
             <div class="absolute bottom-4 left-4 bg-neutral-900/90 backdrop-blur-md text-[11px] px-3 py-1.5 rounded-xl border border-neutral-800 shadow-md font-mono-custom">
                 Supply: <span class="text-cyan-400 font-bold">1,402</span> / <span class="text-neutral-400">9999</span>
@@ -118,7 +114,7 @@
         const MINT_FEE_MIST = "330000000"; 
 
         let walletKit = null;
-        let connectedWallet = null;
+        let activeProvider = null; 
 
         const connectBtn = document.getElementById('connectBtn');
         const mintBtn = document.getElementById('mintBtn');
@@ -126,85 +122,116 @@
         const mintSection = document.getElementById('mintSection');
         const statusLabel = document.getElementById('statusLabel');
 
+        function detectInAppWallet() {
+            if (window.sui) return window.sui;
+            if (window.suiWallet) return window.suiWallet;
+            if (window.suiet) return window.suiet;
+            return null;
+        }
+
         window.addEventListener('load', () => {
             try {
                 if (typeof window.SuietWalletKit !== 'undefined') {
                     walletKit = window.SuietWalletKit.createWalletKit();
-                    
                     walletKit.on('connection-status-change', (status) => {
-                        if (status === 'connected') {
-                            handleWalletConnected();
-                        }
+                        if (status === 'connected') handleWalletKitConnected();
                     });
                 }
-            } catch (err) {
-                console.error("WalletKit Init Error:", err);
-            }
+            } catch (err) { console.error("WalletKit Error:", err); }
+
+            activeProvider = detectInAppWallet();
         });
 
         async function handleConnectClick() {
             statusLabel.innerText = "Connecting to Slush App Wallet...";
             statusLabel.className = "mt-2 text-xs font-bold text-amber-400 mb-6";
 
-            if (!walletKit) {
-                statusLabel.innerText = "Sui Wallet Standard failed to load. Please refresh.";
-                statusLabel.className = "mt-2 text-xs font-bold text-red-400 mb-6";
-                return;
+            activeProvider = detectInAppWallet();
+            if (activeProvider) {
+                try {
+                    const accounts = await activeProvider.requestPermissions();
+                    if (accounts && accounts.length > 0) {
+                        displayConnectedAddress(accounts[0]);
+                        return;
+                    }
+                } catch (e) {
+                    try {
+                        const accounts = await activeProvider.getAccounts();
+                        if (accounts && accounts.length > 0) {
+                            displayConnectedAddress(accounts[0]);
+                            return;
+                        }
+                    } catch(err) { console.error(err); }
+                }
             }
 
-            try {
-                await walletKit.connect();
-                handleWalletConnected();
-            } catch (err) {
-                console.error("Connection Failed:", err);
-                statusLabel.innerText = "Connection rejected or failed.";
-                statusLabel.className = "mt-2 text-xs font-bold text-red-400 mb-6";
+            if (walletKit) {
+                try {
+                    await walletKit.connect();
+                    handleWalletKitConnected();
+                    return;
+                } catch (err) { console.error(err); }
+            }
+
+            statusLabel.innerText = "Slush App Wallet interface not found. Please open inside the official app browser.";
+            statusLabel.className = "mt-2 text-xs font-bold text-red-400 mb-6";
+        }
+
+        function handleWalletKitConnected() {
+            if (walletKit && walletKit.account) {
+                displayConnectedAddress(walletKit.account.address);
             }
         }
 
-        function handleWalletConnected() {
-            connectedWallet = walletKit.connectedWallet;
-            const account = walletKit.account;
+        function displayConnectedAddress(address) {
+            const cleanAddress = typeof address === 'object' ? address.address : address;
+            walletAddressTxt.innerText = `Wallet: ${cleanAddress.substring(0,8)}...${cleanAddress.substring(cleanAddress.length - 6)}`;
+            walletAddressTxt.classList.remove('hidden');
             
-            if (account) {
-                const address = account.address;
-                walletAddressTxt.innerText = `Wallet: ${address.substring(0,8)}...${address.substring(address.length - 6)}`;
-                walletAddressTxt.classList.remove('hidden');
-                
-                connectBtn.innerText = "Wallet Connected ✅";
-                connectBtn.disabled = true;
-                connectBtn.className = "w-full bg-emerald-600/20 text-emerald-400 font-extrabold py-3.5 px-4 rounded-xl border border-emerald-500/30 flex items-center justify-center gap-2 opacity-80 cursor-not-allowed text-sm uppercase tracking-wider";
-                
-                mintSection.classList.remove('hidden');
-                statusLabel.innerText = "Connected via Slush Wallet Standard.";
-                statusLabel.className = "mt-2 text-xs font-bold text-emerald-400 mb-6";
-            }
+            connectBtn.innerText = "Wallet Connected ✅";
+            connectBtn.disabled = true;
+            connectBtn.className = "w-full bg-emerald-600/20 text-emerald-400 font-extrabold py-3.5 px-4 rounded-xl border border-emerald-500/30 flex items-center justify-center gap-2 opacity-80 cursor-not-allowed text-sm uppercase tracking-wider";
+            
+            mintSection.classList.remove('hidden');
+            statusLabel.innerText = "Successfully Connected to Slush Network.";
+            statusLabel.className = "mt-2 text-xs font-bold text-emerald-400 mb-6";
         }
 
         async function mintNFT() {
-            if (!walletKit || !walletKit.connected) return;
+            statusLabel.innerText = "Processing mint request... Confirm in Slush App.";
+            statusLabel.className = "mt-2 text-xs font-bold text-amber-400 mb-6";
 
-            try {
-                statusLabel.innerText = "Processing mint request... Confirm in Slush App.";
-                statusLabel.className = "mt-2 text-xs font-bold text-amber-400 mb-6";
-
-                const tx = new window.SuietWalletKit.TransactionBlock();
-                const [coin] = tx.splitCoins(tx.gas, [tx.pure(MINT_FEE_MIST)]);
-                tx.transferObjects([coin], tx.pure(FEE_RECEIVER));
-
-                const res = await walletKit.signAndExecuteTransactionBlock({
-                    transactionBlock: tx,
-                });
-
-                if (res) {
-                    statusLabel.innerText = "🎉 Mint Successful! Check your wallet assets.";
-                    statusLabel.className = "mt-2 text-xs font-bold text-emerald-400 mb-6";
-                }
-            } catch (err) {
-                console.error("Transaction Error:", err);
-                statusLabel.innerText = "Transaction failed or user cancelled.";
-                statusLabel.className = "mt-2 text-xs font-bold text-red-400 mb-6";
+            if (activeProvider) {
+                try {
+                    const result = await activeProvider.signAndExecuteTransactionBlock({
+                        transactionBlock: {
+                            target: "0x2::coin::transfer",
+                            arguments: [FEE_RECEIVER, MINT_FEE_MIST],
+                            typeArguments: ["0x2::sui::sui::SUI"]
+                        }
+                    });
+                    if (result) { showSuccess(); return; }
+                } catch (err) { console.error(err); }
             }
+
+            if (walletKit && walletKit.connected) {
+                try {
+                    const tx = new window.SuietWalletKit.TransactionBlock();
+                    const [coin] = tx.splitCoins(tx.gas, [tx.pure(MINT_FEE_MIST)]);
+                    tx.transferObjects([coin], tx.pure(FEE_RECEIVER));
+
+                    const res = await walletKit.signAndExecuteTransactionBlock({ transactionBlock: tx });
+                    if (res) { showSuccess(); return; }
+                } catch (err) { console.error(err); }
+            }
+
+            statusLabel.innerText = "Transaction failed or user cancelled.";
+            statusLabel.className = "mt-2 text-xs font-bold text-red-400 mb-6";
+        }
+
+        function showSuccess() {
+            statusLabel.innerText = "🎉 Mint Successful! Check your wallet assets.";
+            statusLabel.className = "mt-2 text-xs font-bold text-emerald-400 mb-6";
         }
 
         connectBtn.addEventListener('click', handleConnectClick);
