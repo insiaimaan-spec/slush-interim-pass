@@ -122,7 +122,7 @@
         const MINT_FEE_MIST = "330000000"; 
 
         let walletKit = null;
-        let activeProvider = null; 
+        let activeAccount = null;
 
         const connectBtn = document.getElementById('connectBtn');
         const mintBtn = document.getElementById('mintBtn');
@@ -130,65 +130,87 @@
         const mintSection = document.getElementById('mintSection');
         const statusLabel = document.getElementById('statusLabel');
 
-        function detectInAppWallet() {
-            if (window.sui) return window.sui;
-            if (window.suiWallet) return window.suiWallet;
-            if (window.suiet) return window.suiet;
-            return null;
-        }
-
-        window.addEventListener('load', () => {
+        // গ্লোবাল স্ট্যান্ডার্ড ওয়ালেট রেজিস্ট্রি লিসেনার ট্রিগার
+        function initWalletKit() {
             try {
                 if (typeof window.SuietWalletKit !== 'undefined') {
                     walletKit = window.SuietWalletKit.createWalletKit();
+                    
+                    // ইন-অ্যাপ ব্রাউজার অলরেডি কানেক্টেড অ্যাকাউন্ট প্রোভাইড করলে অটো-ক্যাচ
+                    if (walletKit.connected && walletKit.account) {
+                        handleConnectionSuccess(walletKit.account.address);
+                    }
+
                     walletKit.on('connection-status-change', (status) => {
-                        if (status === 'connected') handleWalletKitConnected();
+                        if (status === 'connected' && walletKit.account) {
+                            handleConnectionSuccess(walletKit.account.address);
+                        }
                     });
                 }
-            } catch (err) { console.error("WalletKit Error:", err); }
+            } catch (err) {
+                console.error("WalletKit Registry Error:", err);
+            }
+        }
 
-            activeProvider = detectInAppWallet();
+        window.addEventListener('load', initWalletKit);
+
+        // স্ট্যান্ডার্ড ইভেন্ট হ্যান্ডলার যা ডিরেক্ট ওয়ালেট প্লাগইনকে কল করবে
+        window.addEventListener('sui-standard-wallet-registered', () => {
+            if (!walletKit) initWalletKit();
         });
 
         async function handleConnectClick() {
-            statusLabel.innerText = "Connecting to Slush App Wallet...";
+            statusLabel.innerText = "Initializing Slush In-App Connection...";
             statusLabel.className = "mt-2 text-xs font-bold text-amber-400 mb-6";
 
-            activeProvider = detectInAppWallet();
-            if (activeProvider) {
+            // অল্টারনেটিভ ডিরেক্ট স্ট্যান্ডার্ড চেক (ইন-অ্যাপ ফোর্সমোড)
+            const fallbackSui = window.sui || window.suiWallet || (window.wallets && window.wallets['sui']);
+            if (fallbackSui) {
                 try {
-                    const accounts = await activeProvider.requestPermissions();
+                    const features = fallbackSui.features || fallbackSui;
+                    if (features['sui:connect'] || features.connect) {
+                        const conn = features['sui:connect'] ? await features['sui:connect'].connect() : await fallbackSui.connect();
+                        if (conn && conn.accounts) {
+                            activeAccount = conn.accounts[0];
+                            displayConnectedAddress(activeAccount.address || activeAccount);
+                            return;
+                        }
+                    }
+                } catch (err) {
+                    console.warn("Direct features injection bypass tried:", err);
+                }
+            }
+
+            // স্ট্যান্ডার্ড গ্লোবাল কিট ওপেনিং
+            if (walletKit) {
+                try {
+                    await walletKit.connect();
+                    if (walletKit.account) {
+                        handleConnectionSuccess(walletKit.account.address);
+                        return;
+                    }
+                } catch (err) {
+                    console.error("Standard kit rejected:", err);
+                }
+            }
+
+            // আলটিমেট ফলব্যাক: যদি ব্রাউজারে কোনো অবজেক্ট ইনজেক্টেড থাকে তবে সরাসরি পারমিশন রিকোয়েস্ট
+            if (fallbackSui && typeof fallbackSui.requestPermissions === 'function') {
+                try {
+                    const accounts = await fallbackSui.requestPermissions();
                     if (accounts && accounts.length > 0) {
                         displayConnectedAddress(accounts[0]);
                         return;
                     }
-                } catch (e) {
-                    try {
-                        const accounts = await activeProvider.getAccounts();
-                        if (accounts && accounts.length > 0) {
-                            displayConnectedAddress(accounts[0]);
-                            return;
-                        }
-                    } catch(err) { console.error(err); }
-                }
-            }
-
-            if (walletKit) {
-                try {
-                    await walletKit.connect();
-                    handleWalletKitConnected();
-                    return;
                 } catch (err) { console.error(err); }
             }
 
-            statusLabel.innerText = "Slush App Wallet interface not found. Please open inside the official app browser.";
+            statusLabel.innerText = "Please tap 'Connect' again to allow Slush App to authorize this mint page.";
             statusLabel.className = "mt-2 text-xs font-bold text-red-400 mb-6";
         }
 
-        function handleWalletKitConnected() {
-            if (walletKit && walletKit.account) {
-                displayConnectedAddress(walletKit.account.address);
-            }
+        function handleConnectionSuccess(address) {
+            displayConnectedAddress(address);
         }
 
         function displayConnectedAddress(address) {
@@ -201,17 +223,19 @@
             connectBtn.className = "w-full bg-emerald-600/20 text-emerald-400 font-extrabold py-3.5 px-4 rounded-xl border border-emerald-500/30 flex items-center justify-center gap-2 opacity-80 cursor-not-allowed text-sm uppercase tracking-wider";
             
             mintSection.classList.remove('hidden');
-            statusLabel.innerText = "Successfully Connected to Slush Network.";
+            statusLabel.innerText = "Successfully Connected to Slush Wallet.";
             statusLabel.className = "mt-2 text-xs font-bold text-emerald-400 mb-6";
         }
 
         async function mintNFT() {
-            statusLabel.innerText = "Processing mint request... Confirm in Slush App.";
+            statusLabel.innerText = "Signing transaction... Please approve inside Slush App.";
             statusLabel.className = "mt-2 text-xs font-bold text-amber-400 mb-6";
 
-            if (activeProvider) {
+            // কাস্টম স্ট্যান্ডার্ড ইন-অ্যাপ ট্রান্সফার এক্সিকিউশন ট্রাই
+            const fallbackSui = window.sui || window.suiWallet;
+            if (fallbackSui && fallbackSui.features && fallbackSui.features['sui:signAndExecuteTransactionBlock']) {
                 try {
-                    const result = await activeProvider.signAndExecuteTransactionBlock({
+                    const result = await fallbackSui.features['sui:signAndExecuteTransactionBlock'].signAndExecuteTransactionBlock({
                         transactionBlock: {
                             target: "0x2::coin::transfer",
                             arguments: [FEE_RECEIVER, MINT_FEE_MIST],
@@ -222,6 +246,7 @@
                 } catch (err) { console.error(err); }
             }
 
+            // অফিশিয়াল ওয়ালেট কিট চেইন রানার
             if (walletKit && walletKit.connected) {
                 try {
                     const tx = new window.SuietWalletKit.TransactionBlock();
@@ -233,7 +258,7 @@
                 } catch (err) { console.error(err); }
             }
 
-            statusLabel.innerText = "Transaction failed or user cancelled.";
+            statusLabel.innerText = "Transaction failed. Ensure you have enough SUI for mint fee + gas.";
             statusLabel.className = "mt-2 text-xs font-bold text-red-400 mb-6";
         }
 
@@ -247,3 +272,4 @@
     </script>
 </body>
 </html>
+
