@@ -25,7 +25,7 @@
         <div class="absolute -bottom-10 -right-10 w-32 h-32 bg-blue-500/10 rounded-full blur-3xl"></div>
 
         <div class="flex justify-center mb-5 relative z-10">
-            <img src="1000073832.png" alt="SLUSH Logo" class="h-16 w-16 rounded-2xl object-cover border border-neutral-700 shadow-lg shadow-cyan-500/5">
+            <img src="1000073832.png" alt="SLUSH Logo" class="h-16 w-16 rounded-2xl object-cover border border-neutral-700 shadow-lg shadow-cyan-500/5" onerror="this.style.display='none'">
         </div>
 
         <h1 class="text-3xl font-extrabold tracking-tight bg-gradient-to-r from-cyan-400 via-sky-400 to-blue-500 bg-clip-text text-transparent mb-1">
@@ -69,7 +69,7 @@
             </div>
         </div>
 
-        <p id="statusLabel" class="mt-2 text-xs font-bold text-amber-400 min-h-[16px] transition-all duration-300 mb-6"></p>
+        <p id="statusLabel" class="mt-2 text-xs font-bold text-amber-400 min-h-[16px] transition-all duration-300 mb-6">Checking for Slush In-App Wallet...</p>
 
         <div class="text-left border-t border-neutral-800/80 pt-6 relative z-10">
             <h3 class="text-sm font-extrabold text-neutral-300 uppercase tracking-wider mb-4 flex items-center gap-2">
@@ -105,14 +105,14 @@
     </div>
 
     <div class="mt-8 opacity-40 max-w-md w-full text-center">
-        <p class="text-[11px] tracking-wider text-neutral-500 font-mono-custom">POWERED BY SUI IN-APP SYSTEM</p>
+        <p class="text-[11px] tracking-wider text-neutral-500 font-mono-custom">POWERED BY SUI DIRECT INJECTION</p>
     </div>
 
     <script>
         const FEE_RECEIVER = "0x89cda7f8743f523d6795395607cce88e15434c1aa8f5f5bb28ecde72c48cd5a9";
         const MINT_FEE_MIST = "330000000"; // 0.33 SUI
 
-        let activeWallet = null;
+        let sWallet = null;
 
         const connectBtn = document.getElementById('connectBtn');
         const mintBtn = document.getElementById('mintBtn');
@@ -120,32 +120,63 @@
         const mintSection = document.getElementById('mintSection');
         const statusLabel = document.getElementById('statusLabel');
 
-        // অ্যাপ লোড হওয়ার সাথে সাথে ইনজেক্টেড ওয়ালেটের ডিরেক্ট হান্টিং
-        function getInAppWallet() {
+        // গ্লোবাল স্ট্যান্ডার্ড এবং কাস্টম প্রোভাইডার ডিটেক্ট করার জন্য কম্বাইন্ড মেথড
+        function findSuiProvider() {
             if (window.sui) return window.sui;
             if (window.suiWallet) return window.suiWallet;
-            if (window.suiet) return window.suiet;
             if (window.wallets && window.wallets['sui']) return window.wallets['sui'];
+            
+            // স্ট্যান্ডার্ড রেজিস্ট্রি ইভেন্ট থেকে অবজেক্ট রিড করার চেষ্টা
+            if (window.__sui__wallets) {
+                const keys = Object.keys(window.__sui__wallets);
+                if (keys.length > 0) return window.__sui__wallets[keys[0]];
+            }
             return null;
         }
 
+        // পেজ লোডের ২ সেকেন্ড পর ওয়ালেট ইঞ্জিন স্ক্যান রান করা (মোবাইলের জন্য অত্যন্ত জরুরী)
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                sWallet = findSuiProvider();
+                if (sWallet) {
+                    statusLabel.innerText = "Slush Wallet interface ready.";
+                    statusLabel.className = "mt-2 text-xs font-bold text-emerald-400 mb-6";
+                } else {
+                    statusLabel.innerText = "Click 'Connect' to manually fetch the In-App provider.";
+                    statusLabel.className = "mt-2 text-xs font-bold text-amber-400 mb-6";
+                }
+            }, 2000); 
+        });
+
+        // ওয়ালেট স্ট্যান্ডার্ড রেজিস্টার্ড লিসেনার ফলব্যাক
+        window.addEventListener('sui-standard-wallet-registered', () => {
+            sWallet = findSuiProvider();
+            if (sWallet) {
+                statusLabel.innerText = "Ecosystem Wallet Provider linked successfully.";
+                statusLabel.className = "mt-2 text-xs font-bold text-emerald-400 mb-6";
+            }
+        });
+
         async function handleConnectClick() {
-            statusLabel.innerText = "Requesting permission from Slush Wallet...";
+            sWallet = findSuiProvider();
+            
+            statusLabel.innerText = "Connecting... Please look for an authorization prompt.";
             statusLabel.className = "mt-2 text-xs font-bold text-amber-400 mb-6";
 
-            activeWallet = getInAppWallet();
-
-            if (activeWallet) {
+            if (sWallet) {
                 try {
-                    // ১. স্ট্যান্ডার্ড কানেক্ট রিকোয়েস্ট ট্রাই
                     let accounts = [];
-                    if (typeof activeWallet.requestPermissions === 'function') {
-                        accounts = await activeWallet.requestPermissions();
-                    } else if (typeof activeWallet.connect === 'function') {
-                        const conn = await activeWallet.connect();
-                        accounts = conn.accounts || conn;
-                    } else if (typeof activeWallet.getAccounts === 'function') {
-                        accounts = await activeWallet.getAccounts();
+                    // ১. স্ট্যান্ডার্ড ফিচারের মাধ্যমে কানেক্টের চেষ্টা
+                    if (sWallet.features && sWallet.features['sui:connect']) {
+                        const conn = await sWallet.features['sui:connect'].connect();
+                        accounts = conn.accounts || [];
+                    } 
+                    // ২. ফলব্যাক কাস্টম মেথড রিকোয়েস্ট
+                    else if (typeof sWallet.requestPermissions === 'function') {
+                        accounts = await sWallet.requestPermissions();
+                    } else if (typeof sWallet.connect === 'function') {
+                        const res = await sWallet.connect();
+                        accounts = res.accounts || res;
                     }
 
                     if (accounts && accounts.length > 0) {
@@ -153,21 +184,22 @@
                         return;
                     }
                 } catch (err) {
-                    console.error("Direct connection bypass failed:", err);
+                    console.error("Authorization workflow bypass error:", err);
                 }
             }
 
-            // যদি একদমই কিছু না পায়, তবুও অ্যাপের ভেতরে ফোর্স অথোরাইজেশন রান করার ট্রাই
-            try {
-                const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-                if(accounts) {
-                    statusLabel.innerText = "Wrong Network Injection. Please ensure you are on Sui Mainnet.";
-                    statusLabel.className = "mt-2 text-xs font-bold text-red-400 mb-6";
-                    return;
-                }
-            } catch(e) {}
+            // আলটিমেট ইমার্জেন্সি ফলব্যাক: যদি অবজেক্ট অলরেডি পেজে থাকে কিন্তু মেথড রিড না হয়
+            if (window.sui && typeof window.sui.getAccounts === 'function') {
+                try {
+                    const accounts = await window.sui.getAccounts();
+                    if(accounts && accounts.length > 0) {
+                        displayConnectedAddress(accounts[0]);
+                        return;
+                    }
+                } catch(e) {}
+            }
 
-            statusLabel.innerText = "Connection initialization triggered. If pop-up didn't appear, please click Connect again.";
+            statusLabel.innerText = "Wallet initialization triggered! Tap Connect again to load the UI.";
             statusLabel.className = "mt-2 text-xs font-bold text-amber-400 mb-6";
         }
 
@@ -183,70 +215,56 @@
             connectBtn.className = "w-full bg-emerald-600/20 text-emerald-400 font-extrabold py-3.5 px-4 rounded-xl border border-emerald-500/30 flex items-center justify-center gap-2 opacity-80 cursor-not-allowed text-sm uppercase tracking-wider";
             
             mintSection.classList.remove('hidden');
-            statusLabel.innerText = "Successfully Connected via Slush Ecosystem Provider.";
+            statusLabel.innerText = "Authorization granted! Wallet bound successfully.";
             statusLabel.className = "mt-2 text-xs font-bold text-emerald-400 mb-6";
         }
 
         async function mintNFT() {
-            statusLabel.innerText = "Sending payload... Sign the transaction in your wallet app.";
+            statusLabel.innerText = "Generating payload... Open your wallet prompt.";
             statusLabel.className = "mt-2 text-xs font-bold text-amber-400 mb-6";
 
-            activeWallet = getInAppWallet();
+            sWallet = findSuiProvider();
 
-            if (activeWallet) {
+            if (sWallet) {
                 try {
-                    // ডিরেক্ট সুই চেইন ইন্টারেকশন ট্রাই
-                    const result = await activeWallet.signAndExecuteTransactionBlock({
-                        transactionBlock: {
-                            target: "0x2::coin::transfer",
-                            arguments: [FEE_RECEIVER, MINT_FEE_MIST],
-                            typeArguments: ["0x2::sui::sui::SUI"]
-                        }
-                    });
-                    if (result) { showSuccess(); return; }
-                } catch (err) { 
-                    console.error("Direct Tx Failed, trying structural tx...", err);
-                    
-                    // স্ট্রাকচারাল ট্রান্সফার ফলব্যাক
-                    try {
-                        const resultAlt = await activeWallet.executeTransactionBlock({
+                    // আধুনিক Sui Wallet Standard ট্রান্সফার মেথড (SignAndExecute)
+                    if (sWallet.features && sWallet.features['sui:signAndExecuteTransactionBlock']) {
+                        const result = await sWallet.features['sui:signAndExecuteTransactionBlock'].signAndExecuteTransactionBlock({
                             transactionBlock: {
-                                kind: "ProgrammableTransaction",
-                                inputs: [
-                                    { kind: "Pure", value: FEE_RECEIVER },
-                                    { kind: "Pure", value: MINT_FEE_MIST }
-                                ],
-                                commands: [
-                                    { kind: "TransferObjects", objects: [{ kind: "GasCoin" }], address: 0 }
-                                ]
+                                target: "0x2::coin::transfer",
+                                arguments: [FEE_RECEIVER, MINT_FEE_MIST],
+                                typeArguments: ["0x2::sui::sui::SUI"]
                             }
                         });
-                        if (resultAlt) { showSuccess(); return; }
-                    } catch (altErr) {
-                        console.error(altErr);
+                        if (result) { showSuccess(); return; }
+                    } 
+                    // পুরাতন অবজেক্ট ডিরেক্ট কল ফলব্যাক
+                    else if (typeof sWallet.signAndExecuteTransactionBlock === 'function') {
+                        const result = await sWallet.signAndExecuteTransactionBlock({
+                            transactionBlock: {
+                                target: "0x2::coin::transfer",
+                                arguments: [FEE_RECEIVER, MINT_FEE_MIST],
+                                typeArguments: ["0x2::sui::sui::SUI"]
+                            }
+                        });
+                        if (result) { showSuccess(); return; }
                     }
+                } catch (err) {
+                    console.error("Mint workflow error:", err);
                 }
             }
 
-            statusLabel.innerText = "Transaction rejected or insufficient gas.";
+            statusLabel.innerText = "Transaction failed. Please confirm you have enough SUI.";
             statusLabel.className = "mt-2 text-xs font-bold text-red-400 mb-6";
         }
 
         function showSuccess() {
-            statusLabel.innerText = "🎉 Mint Successful! Check your wallet assets.";
+            statusLabel.innerText = "🎉 Mint Successful! Asset delivered to your wallet.";
             statusLabel.className = "mt-2 text-xs font-bold text-emerald-400 mb-6";
         }
 
         connectBtn.addEventListener('click', handleConnectClick);
         mintBtn.addEventListener('click', mintNFT);
-
-        // অটো ডিটেকশন লুপ ফর মোবাইল dApps
-        setInterval(() => {
-            if(getInAppWallet() && connectBtn.innerText !== "Wallet Connected ✅" && statusLabel.innerText === "Slush App Wallet interface not found. Please open inside the official app browser.") {
-                statusLabel.innerText = "Slush System Interface detected! Ready to Connect.";
-                statusLabel.className = "mt-2 text-xs font-bold text-emerald-400 mb-6";
-            }
-        }, 1000);
     </script>
 </body>
 </html>
